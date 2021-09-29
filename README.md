@@ -82,5 +82,6 @@ Usage: ./client/client: [-flag1] [-flagN] searchTerm1 searchTermN
   - [ ] More tests?
 - [ ] REST API / Web server
 - [ ] Multi-instance rate limits via Redis
-- [ ] CI stuff
+- [X] CI stuff
+- [X] SonarQube
 - [ ] Deployment stuff
