@@ -6,7 +6,6 @@ import (
 	"github.com/google/go-github/github"
 	pb "github.com/kruckenb/githubSearch/proto"
 	"golang.org/x/oauth2"
-	"log"
 	"net/http"
 )
 
@@ -17,14 +16,11 @@ type server struct {
 }
 
 func (s *server) Search(ctx context.Context, req *pb.SearchRequest) (*pb.SearchResponse, error) {
-	log.Printf("Request %v", req)
-	results, err := searchGithub(ctx, req, githubClient(ctx, s.oauthToken))
-	log.Printf("Returning results: %v", results)
+	results, err := searchGithub(ctx, req, githubClient(ctx,s.oauthToken))
 	if err != nil {
 		return nil, err
-	} else {
-		return &pb.SearchResponse{ Results: results }, nil
 	}
+	return &pb.SearchResponse{ Results: results }, nil
 }
 
 func githubClient(ctx context.Context, oauthToken *string) *github.Client {
@@ -33,9 +29,8 @@ func githubClient(ctx context.Context, oauthToken *string) *github.Client {
 			&oauth2.Token{AccessToken: *oauthToken},
 		)
 		return github.NewClient(oauth2.NewClient(ctx, ts))
-	} else {
-		return github.NewClient(nil)
 	}
+	return github.NewClient(nil)
 }
 
 func searchGithub (ctx context.Context, req *pb.SearchRequest, client *github.Client) ([]*pb.Result, error) {
@@ -51,9 +46,8 @@ func searchGithub (ctx context.Context, req *pb.SearchRequest, client *github.Cl
 		return nil, fmt.Errorf("GITHUB_API_ERROR: %s", err.Error())
 	} else if searchResponse.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("GITHUB_API_HTTP_ERROR %d: %s", searchResponse.StatusCode, searchResponse.Status)
-	} else {
-		return mapSearchResults(searchResults), nil
 	}
+	return mapSearchResults(searchResults), nil
 }
 
 func constructSearchTerms (req *pb.SearchRequest) string {
